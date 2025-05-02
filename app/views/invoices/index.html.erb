@@ -1,0 +1,47 @@
+<h1>
+  <%= link_to 'Clients', clients_path %> / 
+  <%= link_to "#{@client.id}", @client %> / 
+  <%= link_to "Invoices", client_invoices_path(@client) %>
+</h1>
+
+<p id="notice"><%= notice %></p>
+
+<table>
+  <thead>
+    <tr class='align-left'>
+      <th>Status</th>
+      <th>Payment status</th>
+      <th>Amount</th>
+      <th>Paid amount</th>
+      <th>Issue date</th>
+      <th>Due date</th>
+      <th>Client</th>
+      <th colspan="7"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @invoices.each do |invoice| %>
+      <tr>
+        <td><%= invoice.status %></td>
+        <td><%= invoice.payment_status %></td>
+        <td><%= invoice.amount %></td>
+        <td><%= invoice.paid_amount %></td>
+        <td><%= invoice.issue_date %></td>
+        <td><%= invoice.due_date %></td>
+        <td><%= invoice.client_id %></td>
+        <td><%= link_to 'Show', client_invoice_path(id: invoice.id) %></td>
+        <td><%= link_to 'Transactions', client_invoice_transactions_path(invoice_id: invoice.id) %></td>
+        <td><%= link_to 'Edit', edit_client_invoice_path(id: invoice.id) %></td>
+        <td><%= link_to 'Confirm', client_invoice_confirm_path(invoice_id: invoice.id), method: :post %></td>
+        <td><%= link_to 'Cancel', client_invoice_cancel_path(invoice_id: invoice.id), method: :post %></td>
+        <td><%= link_to 'Update Amount', client_invoice_update_amount_path(invoice_id: invoice.id), method: :post %></td>
+        <td class='red'><%= link_to 'Destroy', client_invoice_path(id: @client.id), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Invoice', new_client_invoice_path %>

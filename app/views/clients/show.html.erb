@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+<h1><%= link_to 'Clients', clients_path %> / <%= link_to "#{@client.id}", @client %></h1>
+<p>
+  <strong>Name:</strong>
+  <%= @client.name %>
+</p>
+
+<p>
+  <strong>Phone:</strong>
+  <%= @client.phone %>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <%= @client.email %>
+</p>
+<strong><%= link_to 'Invoices', client_invoices_path(@client) %></strong>
+<hr />
+<%= link_to 'Edit', edit_client_path(@client) %>

@@ -1,0 +1,33 @@
+# == Schema Information
+#
+# Table name: invoices
+#
+#  id             :integer          not null, primary key
+#  status         :string
+#  payment_status :string
+#  amount         :float
+#  paid_amount    :float
+#  issue_date     :date
+#  due_date       :date
+#  client_id      :integer          not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#
+
+one:
+  status: MyString
+  payment_status: MyString
+  amount: 1.5
+  paid_amount: 1.5
+  issue_date: 2021-09-04
+  due_date: 2021-09-04
+  client: one
+
+two:
+  status: MyString
+  payment_status: MyString
+  amount: 1.5
+  paid_amount: 1.5
+  issue_date: 2021-09-04
+  due_date: 2021-09-04
+  client: two

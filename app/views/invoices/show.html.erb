@@ -1,0 +1,51 @@
+<h1>
+  <%= link_to 'Clients', clients_path %> / <%= link_to "#{@client.id}", @client %> / 
+  <%= link_to "Invoices", client_invoices_path(@client) %> /  
+  <%= link_to "#{@invoice.id}", client_invoice_path(id: @invoice.id) %>
+</h1>
+
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @invoice.status %>
+</p>
+
+<p>
+  <strong>Payment status:</strong>
+  <%= @invoice.payment_status %>
+</p>
+
+<p>
+  <strong>Amount:</strong>
+  <%= @invoice.amount %>
+</p>
+
+<p>
+  <strong>Paid amount:</strong>
+  <%= @invoice.paid_amount %>
+</p>
+
+<p>
+  <strong>Issue date:</strong>
+  <%= @invoice.issue_date %>
+</p>
+
+<p>
+  <strong>Due date:</strong>
+  <%= @invoice.due_date %>
+</p>
+
+<p>
+  <strong>Client:</strong>
+  <%= @invoice.client_id %>
+</p>
+
+<p>
+  <strong><%= link_to 'Transactions', client_invoice_transactions_path(invoice_id: @invoice.id) %></strong>
+  <strong><%= link_to 'Confirm', client_invoice_confirm_path(invoice_id: @invoice.id), method: :post %></strong>
+  <strong><%= link_to 'Cancel', client_invoice_cancel_path(invoice_id: @invoice.id), method: :post %></strong>
+  <strong><%= link_to 'Update Amount', client_invoice_update_amount_path(invoice_id: @invoice.id), method: :post %></strong>
+</p>
+
+<%= link_to 'Edit', edit_client_invoice_path(@invoice) %>

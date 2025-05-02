@@ -1,0 +1,36 @@
+<h1>
+  <%= link_to 'Clients', clients_path %> / <%= link_to "#{@client.id}", @client %> / 
+  <%= link_to "Invoices", client_invoices_path(@client) %> /  
+  <%= link_to "#{@invoice.id}", client_invoice_path(id: @invoice.id) %> /
+  <%= link_to "Transactions", client_invoice_transactions_path(invoice_id: @invoice.id, client_id: @client.id) %> /
+  <%= link_to "#{@transaction.id}", client_invoice_transaction_path(id: @transaction.id) %> /
+</h1>
+
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Unit amount:</strong>
+  <%= @transaction.unit_amount %>
+</p>
+
+<p>
+  <strong>Quantity:</strong>
+  <%= @transaction.quantity %>
+</p>
+
+<p>
+  <strong>Date:</strong>
+  <%= @transaction.date %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @transaction.description %>
+</p>
+
+<p>
+  <strong>Invoice:</strong>
+  <%= @transaction.invoice_id %>
+</p>
+
+<%= link_to 'Edit', edit_client_invoice_transaction_path(id: @transaction.id) %>
