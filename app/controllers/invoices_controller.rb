@@ -1,6 +1,7 @@
 class InvoicesController < ApplicationController
   before_action :set_invoice, only: %i[ show edit update destroy confirm cancel update_amount ]
   before_action :set_client
+  before_action :set_xero_client
 
   # GET /invoices or /invoices.json
   def index
@@ -39,17 +40,48 @@ class InvoicesController < ApplicationController
 
   # POST /invoices or /invoices.json
   def create
-    @invoice = Invoice.new(invoice_params)
+    xero_tenant_id = ''
+    invoice = XeroRuby::Accounting::Invoice.new(
+      type: "ACCREC",
+      contact: XeroRuby::Accounting::Contact.new(
+        name: "John Doe" # Atau contact_id: "uuid-dari-xero"
+      ),
+      line_items: [
+        XeroRuby::Accounting::LineItem.new(
+          description: "Consulting Service",
+          quantity: 1.0,
+          unit_amount: 100.0,
+          account_code: "200" # Sesuaikan dengan kode akun di Xero
+        )
+      ],
+      date: Date.today,
+      due_date: Date.today + 30,
+      status: "DRAFT", # atau "AUTHORISED"
+      line_amount_types: "Exclusive"
+    ) 
 
-    respond_to do |format|
-      if @invoice.save
-        format.html { redirect_to client_invoices_url(id: @client.id), notice: "Invoice was successfully created." }
-        format.json { render :show, status: :created, location: @invoice }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @invoice.errors, status: :unprocessable_entity }
-      end
+    invoices = {  
+      invoices: [invoice]
+    }
+    
+    begin
+      response = @accounting_api.create_invoices(xero_tenant_id, invoices)
+      Rails.logger.info "Xero response: #{response.to_hash}"
+      # return response
+    rescue XeroRuby::ApiError => e
+      puts "Exception when calling create_invoices: #{e}"
     end
+    # @invoice = Invoice.new(invoice_params)
+
+    # respond_to do |format|
+    #   if @invoice.save
+    #     format.html { redirect_to client_invoices_url(id: @client.id), notice: "Invoice was successfully created." }
+    #     format.json { render :show, status: :created, location: @invoice }
+    #   else
+    #     format.html { render :new, status: :unprocessable_entity }
+    #     format.json { render json: @invoice.errors, status: :unprocessable_entity }
+    #   end
+    # end
   end
 
   # PATCH/PUT /invoices/1 or /invoices/1.json
@@ -87,5 +119,11 @@ class InvoicesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def invoice_params
       params.require(:invoice).permit(:status, :payment_status, :amount, :paid_amount, :issue_date, :due_date, :client_id)
+    end
+
+    def set_xero_client
+      @token_set = XERO_CLIENT.get_client_credentials_token
+      # @tenant_id = XERO_CLIENT.connections.first.tenant_id
+      @accounting_api = XERO_CLIENT.accounting_api
     end
 end
