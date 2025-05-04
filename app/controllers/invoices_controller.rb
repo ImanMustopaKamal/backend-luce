@@ -26,13 +26,16 @@ class InvoicesController < ApplicationController
     if @invoice.confirm
       redirect_to client_invoice_url(id: @invoice.id), notice: "Invoice was successfully confirmed."
     else
-      redirect_to client_invoice_url(id: @invoice.id), notice: @invoice.errors.full_messages.to_sentence
+      redirect_to client_invoices_url(id: @invoice.id), notice: @invoice.errors.full_messages.to_sentence
     end
   end
 
   def cancel
-    @invoice.cancel
-    redirect_to client_invoice_url(id: @invoice.id), notice: "Invoice was successfully cancelled."
+    if @invoice.cancel
+      redirect_to client_invoice_url(id: @invoice.id), notice: "Invoice was successfully cancelled."
+    else
+      redirect_to client_invoices_url(id: @invoice.id), notice: @invoice.errors.full_messages.to_sentence
+    end
   end
 
   def update_amount

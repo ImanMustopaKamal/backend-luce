@@ -23,22 +23,22 @@ class Invoice < ApplicationRecord
   validates :status, presence: true, inclusion: STATUSES
   validates :payment_status, presence: true, inclusion: PAYMENT_STATUSES
   validate :zero_transaction
+  validates :invoice_number, presence: true, uniqueness: true
+
+  before_validation :generate_invoice_number, on: :create
+
+  after_commit :sync_to_xero, on: [:update]
 
   scope :by_client_id, ->(client_id) { where(client_id: client_id) }
 
-  # before_validation :generate_invoice_number, on: :create
-
-  # def self.next_sequence_number
-  #   maximum("CAST(SUBSTRING(invoice_number FROM '[0-9]+') AS INTEGER)") || 1000
-  # end
-
-  # def to_param
-  #   invoice_number
-  # end
-
   def cancel
-    update(status: 'CANCELLED', payment_status: 'PAID')
-    # sync_to_xero
+    unless status == 'CONFIRMED'
+      errors.add(:base, "Invoice can only be cancelled if it is in CONFIRMED status.")
+      return false
+    end
+    
+    update(status: 'CANCELLED')
+    sync_to_xero
   end
 
   def confirm
@@ -70,13 +70,13 @@ class Invoice < ApplicationRecord
 
   private
 
-  # def generate_invoice_number
-  #   return if invoice_number.present? || !new_record?
+  def generate_invoice_number
+    return if invoice_number.present?
 
-  #   date_prefix = Date.current.strftime('%Y%m')
-  #   seq = self.class.next_sequence_number + 1
-  #   self.invoice_number = "INV-#{date_prefix}-#{seq.to_s.rjust(4, '0')}"
-  # end
+    date_part = Date.current.strftime('%Y%m%d')
+    seq = Invoice.where("invoice_number LIKE ?", "INV-#{date_part}-%").count + 1
+    self.invoice_number = "INV-#{date_part}-#{seq.to_s.rjust(4, '0')}"
+  end
 
   def zero_transaction
     # Check if the invoice is being cancelled and if the total transaction amount is zero

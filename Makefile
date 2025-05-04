@@ -11,3 +11,9 @@ start:
 
 worker:
 	bundle exec sidekiq -C config/sidekiq.yml
+
+dev:
+	@echo "Starting Rails server and Sidekiq in parallel..."
+	bin/rails server & \
+	bundle exec sidekiq -C config/sidekiq.yml & \
+	wait
