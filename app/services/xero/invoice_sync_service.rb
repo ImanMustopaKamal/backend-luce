@@ -22,6 +22,8 @@ module Xero
     end
 
     def call
+      # return if due_date_too_soon?
+      
       payload = build_payload
       Rails.logger.info("Payload: #{payload.inspect}")
       
@@ -96,6 +98,10 @@ module Xero
         Rails.logger.error("Failed to sync invoice with Xero: #{response.inspect}")
         raise "Xero invoice sync failed"
       end
+    end
+
+    def due_date_too_soon?
+      @invoice.due_date < 5.days.from_now.to_date
     end
 
   end
