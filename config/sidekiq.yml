@@ -2,7 +2,7 @@
 :scheduler:
   :schedule:
     invoice_sync_worker:
-      cron: "* 0 * * *"
+      cron: "0 0 * * *"
       class: "InvoiceSyncWorker"
       queue: "default"
 :queues:

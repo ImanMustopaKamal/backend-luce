@@ -28,8 +28,8 @@ class ClientsController < ApplicationController
       begin
         ActiveRecord::Base.transaction do
           @client.save!
-          @client.sync_to_xero('')
-          format.html { redirect_to @client, notice: "Client was successfully created and synced to Xero." }
+          # @client.sync_to_xero('')
+          format.html { redirect_to @client, notice: "Client was successfully created." }
           format.json { render :show, status: :created, location: @client }
         end
       rescue => e
@@ -48,9 +48,9 @@ class ClientsController < ApplicationController
           @client.update!(client_params)  # save changes to DB
   
           # Sync to Xero, if it fails it will raise an error and rollback
-          @client.sync_to_xero('')
+          # @client.sync_to_xero('')
   
-          format.html { redirect_to @client, notice: "Client was successfully updated and synced to Xero." }
+          format.html { redirect_to @client, notice: "Client was successfully updated." }
           format.json { render :show, status: :ok, location: @client }
         end
       rescue => e

@@ -50,5 +50,3 @@ pkill -f rails
 rails tmp:cache:clear
 
 # Start fresh
-bundle exec sidekiq -C config/sidekiq.yml &
-rails console
