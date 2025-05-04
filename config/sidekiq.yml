@@ -1,0 +1,9 @@
+:concurrency: 5
+:scheduler:
+  :schedule:
+    invoice_sync_worker:
+      cron: "* 0 * * *"
+      class: "InvoiceSyncWorker"
+      queue: "default"
+:queues:
+  - default

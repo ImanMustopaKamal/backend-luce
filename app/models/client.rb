@@ -31,7 +31,9 @@ class Client < ApplicationRecord
 
     if xero_contact_id.present?
       contact.contact_id = xero_contact_id
-      response = XERO_CLIENT.accounting_api.update_contact(xero_tenant_id, xero_contact_id, contact)
+      xero = XeroClient.instance
+      response = xero.accounting_api.update_contact(xero_tenant_id, xero_contact_id, contact)
+      # response = XERO_CLIENT.accounting_api.update_contact(xero_tenant_id, xero_contact_id, contact)
       if response.contacts&.first&.contact_id
         update!(xero_contact_id: response.contacts.first.contact_id)
       else
@@ -40,12 +42,14 @@ class Client < ApplicationRecord
       end
     else
       contacts = XeroRuby::Accounting::Contacts.new(contacts: [contact])
-      response = XERO_CLIENT.accounting_api.create_contacts(xero_tenant_id, contacts)
+      xero = XeroClient.instance
+      response = xero.accounting_api.create_contacts(xero_tenant_id, contacts)
+      # response = XERO_CLIENT.accounting_api.create_contacts(xero_tenant_id, contacts)
       if response.contacts&.first&.contact_id
         update!(xero_contact_id: response.contacts.first.contact_id)
       else
-        Rails.logger.error("Failed to create Xero contact: #{response.inspect}")
-        raise "Xero contact create failed"
+        Rails.logger.error("Failed to update Xero contact: #{response.inspect}")
+        raise "Xero contact update failed"
       end
     end
   rescue XeroRuby::ApiError => e
