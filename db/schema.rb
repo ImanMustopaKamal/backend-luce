@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_05_03_043237) do
+ActiveRecord::Schema[7.0].define(version: 2025_05_03_105054) do
   create_table "clients", force: :cascade do |t|
     t.string "name"
     t.string "phone"
@@ -30,6 +30,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_03_043237) do
     t.integer "client_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "xero_invoice_id"
+    t.datetime "xero_synced_at"
     t.index ["client_id"], name: "index_invoices_on_client_id"
   end
 

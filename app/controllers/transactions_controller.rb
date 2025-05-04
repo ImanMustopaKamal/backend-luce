@@ -53,10 +53,17 @@ class TransactionsController < ApplicationController
 
   # DELETE /transactions/1 or /transactions/1.json
   def destroy
-    @transaction.destroy
-    respond_to do |format|
-      format.html { redirect_to client_invoice_transactions_url(invoice_id: @invoice.id), notice: "Transaction was successfully destroyed." }
-      format.json { head :no_content }
+    if @invoice.transactions.count <= 1
+      respond_to do |format|
+        format.html { redirect_to client_invoice_transactions_url(invoice_id: @invoice.id), notice: "Cannot delete the last transaction." }
+        format.json { head :no_content }
+      end
+    else
+      @transaction.destroy
+      respond_to do |format|
+        format.html { redirect_to client_invoice_transactions_url(invoice_id: @invoice.id), notice: "Transaction was successfully destroyed." }
+        format.json { head :no_content }
+      end
     end
   end
 

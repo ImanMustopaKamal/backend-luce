@@ -40,3 +40,15 @@ Node version: 15.14
 You can see `Makefile` and copy-paste commands from it manually too.
 
 At this point consider initiating a new `git` repository and making an initial commit. Please, as you go about implementing the exercise, commit to git as you would normally do as if you were working on a PR.
+
+
+# Stop all services
+pkill -f sidekiq
+pkill -f rails
+
+# Clear cache
+rails tmp:cache:clear
+
+# Start fresh
+bundle exec sidekiq -C config/sidekiq.yml &
+rails console
