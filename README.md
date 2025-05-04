@@ -41,12 +41,38 @@ You can see `Makefile` and copy-paste commands from it manually too.
 
 At this point consider initiating a new `git` repository and making an initial commit. Please, as you go about implementing the exercise, commit to git as you would normally do as if you were working on a PR.
 
+## Xero Integration
 
-# Stop all services
-pkill -f sidekiq
-pkill -f rails
+This application includes a one-way synchronization feature with [Xero](https://www.xero.com/) to keep invoice data up to date. The sync process is implemented using Xero's Custom Connection and Demo Company setup.
 
-# Clear cache
-rails tmp:cache:clear
+### Key Behaviors
 
-# Start fresh
+- **Sync Trigger:** Invoices are automatically synced to Xero after a transaction is created or updated.
+- **Sync Timing Constraint:** Invoices are only eligible for sync if their due date is at least 5 days away (as required by business logic).
+- **Status Mapping:**
+  - `NEW` → `DRAFT` in Xero
+  - `CONFIRMED` → `AUTHORISED` in Xero (indicates awaiting payment)
+  - `CANCELLED` → `VOID` in Xero
+- **Invoice Amount Calculation:** Invoice amounts are recalculated and updated in Xero whenever new transactions are added or modified.
+- **Currency:** All invoices are created in SGD (Singapore Dollars).
+- **Rate Limiting:** The system respects Xero API rate limits (60 calls per minute, 5,000 per day) and handles large batches (up to 15,000 invoices) using throttling and background processing.
+
+---
+## Environment Variables
+
+Create a `.env` file in the root directory of the project with the following content:
+
+```env
+XERO_CLIENT_ID=your_xero_client_id
+XERO_CLIENT_SECRET=your_xero_client_secret
+XERO_REDIRECT_URI=your_redirect_uri
+XERO_SCOPES=accounting.transactions offline_access
+```
+
+## Testing Xero Sync (Manual Steps)
+
+1. Run the application and background worker using:
+   ```sh
+   make setup
+   make dev
+   ```
